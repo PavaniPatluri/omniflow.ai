@@ -1,0 +1,252 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+// User & Auth Management
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  passwordHash  String?      // Null for Google OAuth users
+  name          String
+  avatarUrl     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  // Relations
+  teamMemberships TeamMember[]
+  businessesOwned Business[]   @relation("BusinessOwner")
+}
+
+// Multi-business Management under One SaaS Account
+model Business {
+  id          String       @id @default(uuid())
+  name        String
+  logoUrl     String?
+  ownerId     String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  owner       User         @relation("BusinessOwner", fields: [ownerId], references: [id])
+  workspaces  Workspace[]
+  teams       TeamMember[]
+  apiKeys     ApiKey[]
+  subscription Subscription?
+}
+
+// Workspace categorization inside businesses
+model Workspace {
+  id          String       @id @default(uuid())
+  name        String
+  businessId  String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  business      Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  leads         Lead[]
+  conversations Conversation[]
+  workflows     Workflow[]
+  documents     Document[]
+  callLogs      CallLog[]
+  appointments  Appointment[]
+}
+
+// Team Member assignment and role permissions
+model TeamMember {
+  id          String       @id @default(uuid())
+  userId      String
+  businessId  String
+  role        String       @default("SUPPORT_AGENT")
+  isActive    Boolean      @default(true)
+  joinedAt    DateTime     @default(now())
+
+  // Relations
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business      Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  assignedChats Conversation[] @relation("ChatAssignee")
+  appointments  Appointment[]  @relation("AppointmentAssignee")
+
+  @@unique([userId, businessId])
+}
+
+// Unified Lead Profile & CRM Tracker
+model Lead {
+  id            String       @id @default(uuid())
+  workspaceId   String
+  name          String
+  email         String?
+  phone         String?
+  source        String
+  status        String       @default("NEW")
+  tags          String       @default("") // E.g., "High Value,Tech Startup"
+  customFields  String?      // Additional parsed metrics JSON string
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  workspace     Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  appointments  Appointment[]
+}
+
+// Multi-channel Conversational State
+model Conversation {
+  id            String             @id @default(uuid())
+  workspaceId   String
+  leadId        String?
+  channel       String
+  status        String             @default("OPEN")
+  priority      Boolean            @default(false)
+  assigneeId    String?
+  externalId    String?            // External ID from WhatsApp/Insta/FB
+  sentiment     String?            // Positive, Neutral, Negative
+  urgency       String?            // High, Medium, Low
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  // Relations
+  workspace     Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  lead          Lead?              @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  assignee      TeamMember?        @relation("ChatAssignee", fields: [assigneeId], references: [id])
+  messages      Message[]
+}
+
+// Conversation Messages history
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderType     String       // "USER", "AI", "AGENT"
+  senderName     String
+  content        String
+  mediaUrl       String?
+  timestamp      DateTime     @default(now())
+
+  // Relations
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+// Call Logs for AI Voice Agents
+model CallLog {
+  id             String    @id @default(uuid())
+  workspaceId    String
+  externalCallId String    @unique // Twilio Call SID
+  callerNumber   String
+  receiverNumber String
+  durationSec    Int       @default(0)
+  recordingUrl   String?
+  transcript     String?   // Audio-to-text dump
+  summary        String?   // AI-generated call highlights
+  intentDetected String?
+  agentName      String    @default("OmniVoice Agent")
+  timestamp      DateTime  @default(now())
+
+  // Relations
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+// Booking Management
+model Appointment {
+  id              String     @id @default(uuid())
+  workspaceId     String
+  leadId          String
+  assigneeId      String?
+  title           String
+  description     String?
+  startTime       DateTime
+  endTime         DateTime
+  calendarType    String     @default("INTERNAL") // GOOGLE, OUTLOOK, INTERNAL
+  calendarEventId String?
+  status          String     @default("SCHEDULED") // SCHEDULED, CANCELLED, COMPLETED
+  createdAt       DateTime   @default(now())
+
+  // Relations
+  workspace       Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  lead            Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  assignee        TeamMember? @relation("AppointmentAssignee", fields: [assigneeId], references: [id])
+}
+
+// Visual Workflow Automation Builder configuration
+model Workflow {
+  id          String       @id @default(uuid())
+  workspaceId String
+  name        String
+  isActive    Boolean      @default(false)
+  triggerType String       // E.g., "WHATSAPP_INBOUND", "LEAD_STAGE_CHANGED"
+  nodes       String       // Node configs JSON string
+  edges       String       // Connection vectors JSON string
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+// Knowledge Base Documents
+model Document {
+  id          String       @id @default(uuid())
+  workspaceId String
+  fileName    String
+  fileType    String       // PDF, DOCX, CSV, URL
+  fileSize    Int?
+  storageUrl  String?
+  textContent String?      // Extracted text cache
+  status      String       @default("PROCESSING") // PROCESSING, INDEXED, FAILED
+  chunkCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+
+  // Relations
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  chunks      DocumentChunk[]
+}
+
+model DocumentChunk {
+  id          String    @id @default(uuid())
+  documentId  String
+  content     String
+  tokenCount  Int?
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  document    Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+// API Credentials
+model ApiKey {
+  id          String       @id @default(uuid())
+  businessId  String
+  name        String
+  tokenHash   String       @unique
+  createdAt   DateTime     @default(now())
+  expiresAt   DateTime?
+
+  // Relations
+  business    Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+// Billing & Subscription levels
+model Subscription {
+  id          String       @id @default(uuid())
+  businessId  String       @unique
+  planName    String       // FREE, STARTER, PRO, ENTERPRISE
+  status      String       // ACTIVE, CANCELLED, PAST_DUE
+  stripeId    String?      @unique
+  billingCycle String      // MONTHLY, YEARLY
+  currentPeriodStart DateTime
+  currentPeriodEnd DateTime
+  usageLimitChats Int      @default(500)
+  usageUsedChats  Int      @default(0)
+  usageLimitVoice Int      @default(30) // in minutes
+  usageUsedVoice  Int      @default(0)
+  createdAt   DateTime     @default(now())
+
+  // Relations
+  business    Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}

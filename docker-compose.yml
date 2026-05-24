@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Postgres removed for MVP to match schema.prisma (SQLite)
+
+  redis:
+    image: redis:7-alpine
+    container_name: omniflow-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: omniflow-chroma
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadata:/chroma/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: omniflow-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DATABASE_URL=file:./dev.db
+      - REDIS_URL=redis://redis:6379
+      - VECTOR_DB_URL=http://chromadb:8000
+      - JWT_SECRET=super_secret_jwt_key_98765 # In production, inject this securely
+    depends_on:
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    volumes:
+      - sqlite_data:/usr/src/app/prisma
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: omniflow-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+
+volumes:
+  sqlite_data:
+  chromadata:
