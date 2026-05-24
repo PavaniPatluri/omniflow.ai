@@ -4,7 +4,8 @@
   "description": "Multi-Channel Business Auto Reply & Voice Automation API Engine",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+    "build": "prisma generate",
+    "start": "prisma db push --accept-data-loss && node seed.js && node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest --detectOpenHandles --forceExit"
   },
