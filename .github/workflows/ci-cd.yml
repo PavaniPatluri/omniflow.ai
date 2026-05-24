@@ -58,7 +58,7 @@ jobs:
 
       - name: Verify Production Compilation
         run: |
-          npm run build || echo "Skip client bundling verification during boilerplate setup"
+          npm run build:all || echo "Skip client bundling verification during boilerplate setup"
 
   docker-image-publish-dry-run:
     needs: [lint-and-test-backend, lint-and-build-frontend]
@@ -80,6 +80,6 @@ jobs:
       - name: Verify Frontend Docker Build
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./frontend
           push: false
           tags: omniflow-frontend:test
