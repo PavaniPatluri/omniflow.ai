@@ -4,7 +4,8 @@ import {
   Phone, Calendar, FileText, Send, UserPlus, Shield, Sparkles, LogOut, 
   Menu, X, Check, ArrowRight, Play, Square, Volume2, Plus, Trash2, 
   Filter, Search, Tag, AlertTriangle, AlertCircle, ArrowUpRight, BarChart2,
-  TrendingUp, CreditCard, Key, Upload, Globe, Link, HelpCircle, ChevronRight, Download, Save
+  TrendingUp, CreditCard, Key, Upload, Globe, Link, HelpCircle, ChevronRight, Download, Save,
+  Eye, EyeOff
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -59,6 +60,7 @@ export default function App() {
   const [authForm, setAuthForm] = useState({ email: '', password: '', name: '', businessName: '' });
   const [authError, setAuthError] = useState('');
   const [authSuccess, setAuthSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Check auth on load
   useEffect(() => {
@@ -1361,14 +1363,23 @@ export default function App() {
                       </button>
                     )}
                   </div>
-                  <input 
-                    type="password" 
-                    placeholder="admin123"
-                    value={authForm.password}
-                    onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
-                    className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:border-brand-500 focus:outline-none"
-                    required
-                  />
+                  <div className="relative">
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="admin123"
+                      value={authForm.password}
+                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 pr-10 text-sm text-slate-200 focus:border-brand-500 focus:outline-none"
+                      required
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               )}
 
