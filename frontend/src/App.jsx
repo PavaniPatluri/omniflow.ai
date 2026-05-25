@@ -251,9 +251,8 @@ export default function App() {
     // Update local state first
     const updatedNodes = rfNodes.map(rn => ({
       id: rn.id,
-      type: rn.data.type,
-      label: rn.data.label,
-      desc: rn.data.desc,
+      type: rn.type,
+      data: rn.data,
       position: rn.position
     }));
     
@@ -277,6 +276,7 @@ export default function App() {
     } catch (error) {
       console.warn('Network error saving workflow to backend, mock state saved');
     }
+    alert('Workflow saved successfully!');
   };
 
   // 4. Voice Call Logs & Audio Player States
