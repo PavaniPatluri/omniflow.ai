@@ -28,7 +28,7 @@ const server = http.createServer(app);
 // ── CORS — locked to allowed origins in production ───────────────────────────
 const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map(o => o.trim())
-  : ['http://localhost:3000', 'http://localhost:5173'];
+  : ['http://localhost:3000', 'http://localhost:5173', 'https://omniflow-ai-frontend.vercel.app'];
 
 app.use(cors({
   origin: (origin, callback) => {
