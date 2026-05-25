@@ -30,6 +30,8 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const CustomNode = ({ data }) => {
   return (
     <div className="bg-slate-900 border border-white/10 p-4 rounded-xl w-64 text-center shadow-lg relative glow-purple hover:border-brand-500/40 transition">
@@ -66,7 +68,7 @@ export default function App() {
   useEffect(() => {
     const token = localStorage.getItem('omniflow_token');
     if (token) {
-      fetch('http://localhost:5000/api/auth/me', {
+      fetch(`${API_BASE_URL}/api/auth/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       .then(res => res.json())
@@ -76,7 +78,7 @@ export default function App() {
           setCurrentView('dashboard');
 
           // Fetch workflows on load
-          fetch('http://localhost:5000/api/workflow/workflows', {
+          fetch(`${API_BASE_URL}/api/workflow/workflows`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
           .then(res => res.json())
@@ -261,7 +263,7 @@ export default function App() {
     
     // Attempt save to API
     try {
-      const response = await fetch(`http://localhost:5000/api/workflow/workflows/${selectedWorkflowId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/workflow/workflows/${selectedWorkflowId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -454,7 +456,7 @@ export default function App() {
   // Real-time backend socket listener
   useEffect(() => {
     if (!user) return;
-    const socket = io('http://localhost:5000', {
+    const socket = io(API_BASE_URL, {
       withCredentials: true
     });
     
@@ -516,7 +518,7 @@ export default function App() {
 
     try {
       if (authMode === 'login') {
-        const res = await fetch('http://localhost:5000/api/auth/login', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: authForm.email, password: authForm.password })
@@ -534,7 +536,7 @@ export default function App() {
           setAuthError(data.error || 'Invalid credentials.');
         }
       } else if (authMode === 'signup') {
-        const res = await fetch('http://localhost:5000/api/auth/signup', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -557,7 +559,7 @@ export default function App() {
           setAuthError(data.error || 'Failed to create account.');
         }
       } else if (authMode === 'forgot') {
-        const res = await fetch('http://localhost:5000/api/auth/forgot-password', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: authForm.email })
@@ -809,7 +811,7 @@ export default function App() {
     if (!newWorkflowData.name) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/workflow/workflows', {
+      const response = await fetch(`${API_BASE_URL}/api/workflow/workflows`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
