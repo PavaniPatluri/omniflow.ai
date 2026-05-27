@@ -2840,7 +2840,7 @@ export default function App() {
                       { id: 'whatsapp', name: 'WhatsApp Business', icon: MessageCircle, status: 'Connected', msgs: '1,204', leads: '342', ai: 'Active', color: 'text-green-400', bg: 'bg-green-500/10' },
                       { id: 'instagram', name: 'Instagram Direct', icon: Instagram, status: 'Connected', msgs: '856', leads: '189', ai: 'Active', color: 'text-pink-400', bg: 'bg-pink-500/10' },
                       { id: 'facebook', name: 'Facebook Messenger', icon: Facebook, status: 'Connected', msgs: '432', leads: '95', ai: 'Active', color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                      { id: 'linkedin', name: 'LinkedIn Messages', icon: Linkedin, status: 'Disconnected', msgs: '0', leads: '0', ai: 'Inactive', color: 'text-slate-400', bg: 'bg-slate-500/10' },
+                      { id: 'linkedin', name: 'LinkedIn Messages', icon: Linkedin, status: 'Connected', msgs: '215', leads: '34', ai: 'Active', color: 'text-blue-500', bg: 'bg-blue-600/10' },
                       { id: 'webchat', name: 'Website Widget', icon: Globe, status: 'Connected', msgs: '3,492', leads: '812', ai: 'Active', color: 'text-brand-400', bg: 'bg-brand-500/10' },
                       { id: 'email', name: 'Support Email', icon: Mail, status: 'Connected', msgs: '2,105', leads: '43', ai: 'Active', color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
                       { id: 'sms', name: 'SMS (Twilio)', icon: Smartphone, status: 'Connected', msgs: '654', leads: '12', ai: 'Inactive', color: 'text-purple-400', bg: 'bg-purple-500/10' },
