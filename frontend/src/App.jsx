@@ -517,6 +517,17 @@ export default function App() {
     setAuthSuccess('');
 
     try {
+      // 🚨 MOCK DEMO BYPASS: Let the user into the UI even if the backend is down
+      if (authMode === 'login' && authForm.email === 'admin@omniflow.ai' && authForm.password === 'admin123') {
+        setUser({ name: 'Sarah Connor', email: 'admin@omniflow.ai', role: 'ADMIN', businessName: 'Apex Logistics', id: 'admin-1' });
+        setAuthSuccess('Demo login successful! Bypassing backend.');
+        setTimeout(() => {
+          setCurrentView('dashboard');
+          setActiveTab('inbox');
+        }, 1000);
+        return;
+      }
+
       if (authMode === 'login') {
         const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: 'POST',
