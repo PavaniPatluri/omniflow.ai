@@ -5,7 +5,7 @@ import {
   Menu, X, Check, ArrowRight, Play, Square, Volume2, Plus, Trash2, 
   Filter, Search, Tag, AlertTriangle, AlertCircle, ArrowUpRight, BarChart2,
   TrendingUp, CreditCard, Key, Upload, Globe, Link, HelpCircle, ChevronRight, Download, Save,
-  Eye, EyeOff
+  Eye, EyeOff, Instagram, Facebook, Linkedin, Mail, Smartphone, MessageCircle
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -1457,6 +1457,7 @@ export default function App() {
                   { id: 'inbox', label: 'Unified Inbox', icon: Inbox, badge: conversations.filter(c => c.status === 'OPEN').length },
                   { id: 'crm', label: 'Leads CRM', icon: Users },
                   { id: 'appointments', label: 'Booking Calendar', icon: Calendar },
+                  { id: 'omnichannels', label: 'Omni Channels', icon: Globe },
                   { id: 'workflow', label: 'Workflows Builder', icon: Sliders },
                   { id: 'voice', label: 'Voice Call Logs', icon: Phone },
                   { id: 'kb', label: 'Knowledge Base', icon: Database },
@@ -2775,6 +2776,112 @@ export default function App() {
                         ))}
                       </div>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================== */}
+              {/* 3.7 OMNI CHANNELS TAB                      */}
+              {/* ========================================== */}
+              {activeTab === 'omnichannels' && (
+                <div className="space-y-6 max-w-7xl mx-auto pb-20">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h2 className="text-xl font-bold text-white font-outfit">Omni Channels Hub</h2>
+                      <p className="text-slate-400 text-sm mt-1">Connect and manage all your customer communication channels in one place.</p>
+                    </div>
+                  </div>
+                  
+                  {/* Architecture Flow */}
+                  <div className="bg-slate-950/60 border border-white/5 rounded-2xl p-6 overflow-hidden">
+                    <h3 className="text-sm font-semibold text-slate-300 mb-6">Data Architecture & Routing</h3>
+                    <div className="flex flex-col md:flex-row items-center justify-between text-center gap-4">
+                      
+                      {/* Step 1 */}
+                      <div className="flex-1 bg-slate-900/50 border border-white/5 rounded-xl p-4 w-full relative group hover:border-brand-500/50 transition-colors">
+                        <Globe className="w-6 h-6 text-slate-400 mx-auto mb-2 group-hover:text-brand-400 transition-colors" />
+                        <div className="font-semibold text-white text-sm">8+ Channels</div>
+                        <div className="text-[10px] text-slate-500 mt-1">Ingress & Egress</div>
+                      </div>
+
+                      <ArrowRight className="w-5 h-5 text-slate-600 hidden md:block" />
+
+                      {/* Step 2 */}
+                      <div className="flex-1 bg-slate-900/50 border border-white/5 rounded-xl p-4 w-full relative group hover:border-brand-500/50 transition-colors">
+                        <Inbox className="w-6 h-6 text-slate-400 mx-auto mb-2 group-hover:text-brand-400 transition-colors" />
+                        <div className="font-semibold text-white text-sm">Unified Inbox</div>
+                        <div className="text-[10px] text-slate-500 mt-1">Centralized Queue</div>
+                      </div>
+
+                      <ArrowRight className="w-5 h-5 text-slate-600 hidden md:block" />
+
+                      {/* Step 3 */}
+                      <div className="flex-1 bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 w-full relative group hover:border-brand-500/50 transition-colors glow-purple">
+                        <Sparkles className="w-6 h-6 text-brand-400 mx-auto mb-2" />
+                        <div className="font-semibold text-white text-sm">OmniFlow AI Engine</div>
+                        <div className="text-[10px] text-brand-300 mt-1">NLP & Auto-Resolution</div>
+                      </div>
+
+                      <ArrowRight className="w-5 h-5 text-slate-600 hidden md:block" />
+
+                      {/* Step 4 */}
+                      <div className="flex-1 bg-slate-900/50 border border-white/5 rounded-xl p-4 w-full relative group hover:border-brand-500/50 transition-colors">
+                        <Database className="w-6 h-6 text-slate-400 mx-auto mb-2 group-hover:text-brand-400 transition-colors" />
+                        <div className="font-semibold text-white text-sm">CRM & Analytics</div>
+                        <div className="text-[10px] text-slate-500 mt-1">Lead Capture & Insights</div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  {/* Channels Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {[
+                      { id: 'whatsapp', name: 'WhatsApp Business', icon: MessageCircle, status: 'Connected', msgs: '1,204', leads: '342', ai: 'Active', color: 'text-green-400', bg: 'bg-green-500/10' },
+                      { id: 'instagram', name: 'Instagram Direct', icon: Instagram, status: 'Connected', msgs: '856', leads: '189', ai: 'Active', color: 'text-pink-400', bg: 'bg-pink-500/10' },
+                      { id: 'facebook', name: 'Facebook Messenger', icon: Facebook, status: 'Connected', msgs: '432', leads: '95', ai: 'Active', color: 'text-blue-400', bg: 'bg-blue-500/10' },
+                      { id: 'linkedin', name: 'LinkedIn Messages', icon: Linkedin, status: 'Disconnected', msgs: '0', leads: '0', ai: 'Inactive', color: 'text-slate-400', bg: 'bg-slate-500/10' },
+                      { id: 'webchat', name: 'Website Widget', icon: Globe, status: 'Connected', msgs: '3,492', leads: '812', ai: 'Active', color: 'text-brand-400', bg: 'bg-brand-500/10' },
+                      { id: 'email', name: 'Support Email', icon: Mail, status: 'Connected', msgs: '2,105', leads: '43', ai: 'Active', color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+                      { id: 'sms', name: 'SMS (Twilio)', icon: Smartphone, status: 'Connected', msgs: '654', leads: '12', ai: 'Inactive', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+                      { id: 'aicalls', name: 'AI Voice Agent', icon: Phone, status: 'Connected', msgs: '128', leads: '45', ai: 'Active', color: 'text-orange-400', bg: 'bg-orange-500/10' }
+                    ].map(channel => (
+                      <div key={channel.id} className="bg-slate-950/60 border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-colors flex flex-col">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className={`p-2.5 rounded-xl ${channel.bg}`}>
+                            <channel.icon className={`w-5 h-5 ${channel.color}`} />
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${channel.status === 'Connected' ? 'bg-green-500/10 text-green-400' : 'bg-slate-800 text-slate-400'}`}>
+                              {channel.status}
+                            </span>
+                            <span className="text-[10px] text-slate-500 mt-1 flex items-center">
+                              AI Engine: 
+                              <span className={`ml-1 font-semibold ${channel.ai === 'Active' ? 'text-brand-400' : 'text-slate-500'}`}>{channel.ai}</span>
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <h3 className="text-sm font-bold text-white mb-4">{channel.name}</h3>
+                        
+                        <div className="grid grid-cols-2 gap-2 mb-5">
+                          <div className="bg-slate-900/50 rounded-lg p-2 border border-white/5">
+                            <div className="text-[10px] text-slate-500 mb-0.5">Messages</div>
+                            <div className="text-sm font-semibold text-slate-200">{channel.msgs}</div>
+                          </div>
+                          <div className="bg-slate-900/50 rounded-lg p-2 border border-white/5">
+                            <div className="text-[10px] text-slate-500 mb-0.5">Leads Gen.</div>
+                            <div className="text-sm font-semibold text-slate-200">{channel.leads}</div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-auto">
+                          <button className="w-full bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold py-2 rounded-lg transition-colors border border-white/5">
+                            {channel.status === 'Connected' ? 'Configure Channel' : 'Connect Account'}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
