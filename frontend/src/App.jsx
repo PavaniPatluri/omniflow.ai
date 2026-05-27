@@ -1513,6 +1513,17 @@ export default function App() {
                 </div>
               </div>
 
+              <div className="flex-1 max-w-md mx-8 hidden md:block">
+                <div className="relative group">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-brand-400 transition-colors" />
+                  <input 
+                    type="text" 
+                    placeholder="Search messages, leads, workflows... (Press '/')" 
+                    className="w-full bg-slate-950/50 hover:bg-slate-900 border border-white/10 rounded-full pl-9 pr-4 py-2 text-xs text-slate-200 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50 transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2 text-xs">
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
