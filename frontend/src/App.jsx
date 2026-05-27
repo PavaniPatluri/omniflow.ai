@@ -572,7 +572,8 @@ export default function App() {
         }
       }
     } catch (err) {
-      setAuthError('Network error communicating with the server.');
+      console.error('Login error:', err);
+      setAuthError(`Network Error: ${err.message}. Target: ${API_BASE_URL}`);
     }
   };
 
