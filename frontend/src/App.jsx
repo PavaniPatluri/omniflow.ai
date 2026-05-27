@@ -211,6 +211,7 @@ export default function App() {
   const [selectedWorkflowId, setSelectedWorkflowId] = useState('wf-1');
   const [showNewWorkflowModal, setShowNewWorkflowModal] = useState(false);
   const [newWorkflowData, setNewWorkflowData] = useState({ name: '', triggerType: 'WHATSAPP_INBOUND' });
+  const [selectedChannel, setSelectedChannel] = useState(null);
   const [rfNodes, setRfNodes, onNodesChange] = useNodesState([]);
   const [rfEdges, setRfEdges, onEdgesChange] = useEdgesState([]);
 
@@ -2888,13 +2889,67 @@ export default function App() {
                         </div>
                         
                         <div className="mt-auto">
-                          <button className="w-full bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold py-2 rounded-lg transition-colors border border-white/5">
+                          <button 
+                            onClick={() => setSelectedChannel(channel)}
+                            className="w-full bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold py-2 rounded-lg transition-colors border border-white/5"
+                          >
                             {channel.status === 'Connected' ? 'Configure Channel' : 'Connect Account'}
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
+
+                  {/* Configure Channel Modal */}
+                  {selectedChannel && (
+                    <div className="fixed inset-0 bg-slate-1000/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                      <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+                        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className={`p-2 rounded-lg ${selectedChannel.bg}`}>
+                              <selectedChannel.icon className={`w-5 h-5 ${selectedChannel.color}`} />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-bold text-white">Configure {selectedChannel.name}</h3>
+                              <p className="text-xs text-slate-400">Manage webhook keys and AI settings</p>
+                            </div>
+                          </div>
+                          <button onClick={() => setSelectedChannel(null)} className="text-slate-400 hover:text-white transition-colors">
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                          <div>
+                            <label className="block text-slate-400 text-xs font-semibold mb-1">API Key / Token</label>
+                            <input type="password" defaultValue="sk_live_123456789" className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-brand-500 focus:outline-none" />
+                          </div>
+                          <div>
+                            <label className="block text-slate-400 text-xs font-semibold mb-1">Webhook URL</label>
+                            <input type="text" readOnly value={`https://api.omniflow.ai/webhooks/${selectedChannel.id}`} className="w-full bg-slate-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-500 font-mono" />
+                          </div>
+                          <div className="flex items-center justify-between pt-2">
+                            <span className="text-sm font-semibold text-slate-300">Enable AI Auto-Replies</span>
+                            <div className={`w-10 h-5 rounded-full relative cursor-pointer ${selectedChannel.ai === 'Active' ? 'bg-brand-500' : 'bg-slate-700'}`}>
+                              <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 shadow transition-all ${selectedChannel.ai === 'Active' ? 'right-0.5' : 'left-0.5'}`}></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-6 border-t border-white/5 flex justify-end space-x-3 bg-slate-950/30">
+                          <button onClick={() => setSelectedChannel(null)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">Cancel</button>
+                          <button 
+                            onClick={() => { 
+                              alert(`${selectedChannel.name} configuration saved!`); 
+                              setSelectedChannel(null); 
+                            }} 
+                            className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-brand-500/20 transition-all"
+                          >
+                            Save Changes
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               )}
 
