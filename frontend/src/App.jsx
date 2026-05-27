@@ -311,27 +311,29 @@ export default function App() {
   const [isPlayingCall, setIsPlayingCall] = useState(false);
   const audioRef = useRef(null);
 
-  // Sync audio playback
+  // Sync audio playback using AI Text-to-Speech
   useEffect(() => {
-    if (audioRef.current) {
-      if (isPlayingCall) {
-        audioRef.current.play().catch(e => {
-          console.error("Audio playback error:", e);
-          setIsPlayingCall(false);
-        });
-      } else {
-        audioRef.current.pause();
-      }
+    if (isPlayingCall && selectedCallLog?.transcript) {
+      window.speechSynthesis.cancel();
+      // Remove the "Customer: " and "Agent: " prefixes for smoother reading
+      const cleanText = selectedCallLog.transcript.replace(/Customer: /g, '').replace(/Agent: /g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.1; // Slightly higher pitch for AI agent voice
+      
+      utterance.onend = () => setIsPlayingCall(false);
+      utterance.onerror = () => setIsPlayingCall(false);
+      
+      window.speechSynthesis.speak(utterance);
+    } else {
+      window.speechSynthesis.cancel();
     }
-  }, [isPlayingCall]);
+  }, [isPlayingCall, selectedCallLog]);
 
   // When changing log, stop playback
   useEffect(() => {
     setIsPlayingCall(false);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
+    window.speechSynthesis.cancel();
   }, [selectedCallLog]);
   const [callSimulateForm, setCallSimulateForm] = useState({ phoneNumber: '', scriptText: 'Reschedule appointment' });
   const [callStatusMessage, setCallStatusMessage] = useState('');
@@ -2486,9 +2488,6 @@ export default function App() {
                               {isPlayingCall ? <Square className="w-3.5 h-3.5 fill-white" /> : <Play className="w-3.5 h-3.5 fill-white" />}
                             </button>
                             <audio 
-                              ref={audioRef} 
-                              src={selectedCallLog.recordingUrl} 
-                              onEnded={() => setIsPlayingCall(false)} 
                               className="hidden" 
                             />
                             {/* Mock Wave form */}
